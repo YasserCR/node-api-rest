@@ -1,27 +1,65 @@
+const { matchedData } = require('express-validator');
 const { trackModel } = require('../models');
+const { handleHttpError } = require('../utils/error.handler');
 
 const getItems = async (req, res) => {
-    const data = await trackModel.find({});
-    res.send({ data })
+
+    try {
+        const user = req.user;
+        const data = await trackModel.findAllData({});
+        res.send({ data, user });
+    } catch (e) {
+        console.log(e);
+        handleHttpError(res, 'ERROR GETTING ITEMS');
+    }
 }
 
-const getItem = (req, res) => {
+const getItem = async (req, res) => {
+    try {
+        req = matchedData(req);
+        const { id } = req;
+        const data = await trackModel.findOneData(id);
+        res.send({ data });
+    } catch (e) {
+        console.log(e);
+        handleHttpError(res, "ERROR GETTING ITEM");
+    }
 
 }
 
 const createItem = async (req, res) => {
-    const { body } = req;
-    console.log(body);
-    const data = await trackModel.create(body)
-    res.send({ data })
+
+    try {
+        const body = matchedData(req);
+        const data = await trackModel.create(body);
+        res.send({ data });
+    } catch (error) {
+        handleHttpError(res, 'ERROR CREATING ITEMS');
+    }
 }
 
-const updateItem = (req, res) => {
-
+const updateItem = async (req, res) => {
+    try {
+        const { id, ...body } = matchedData(req);
+        const data = await trackModel.findByIdAndUpdate(
+            id, body, { new: true }
+        );
+        res.send({ data });
+    } catch (error) {
+        handleHttpError(res, 'ERROR UPDATING ITEMS');
+    }
 
 }
 
-const deleteItem = (req, res) => {
+const deleteItem = async (req, res) => {
+    try {
+        req = matchedData(req);
+        const { id } = req;
+        const data = await trackModel.delete({ _id: id });
+        res.send({ data });
+    } catch (e) {
+        handleHttpError(res, "ERROR DELETING ITEM");
+    }
 
 }
 

@@ -4,8 +4,7 @@ const validateResults = require('../utils/validator.handler');
 const getItemValidator = [
     check("id")
     .exists()
-    .notEmpty()
-    .isMongoId(),
+    .notEmpty(),
     (req, res, next) =>  validateResults(req, res, next)
 ];
 
