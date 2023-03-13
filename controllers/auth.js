@@ -42,6 +42,7 @@ const loginController = async (req, res) => {
 
         if (!check) {
             handleHttpError(res, "INCORRECT PASSWORD", 401);
+            res.status(401);
             return;
         }
 
